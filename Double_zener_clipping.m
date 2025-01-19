@@ -6,10 +6,10 @@ T0 = 300; % Base temperature (K)
 T_breakdown = 40; % Reverse temperature difference for breakdown (K)
 R_source = 1; % Source thermal resistance (K/W)
 R_forward = 0.2; % Thermal resistance in forward bias (K/W)
-R_reverse_high = 10; % Thermal resistance in reverse bias before breakdown (K/W)
-R_reverse_breakdown = 0.8; % Thermal resistance in reverse bias after breakdown (K/W)
+R_reverse = 10; % Thermal resistance in reverse bias before breakdown (K/W)
+R_breakdown = 0.4; % Thermal resistance in reverse bias after breakdown (K/W)
 dt = 0.01; % Time step (s)
-total_time = 10; % Total simulation time (s)
+total_time = 5; % Total simulation time (s)
 
 % Parameters for input sinusoidal temperature wave
 TR_amplitude = 50; % Amplitude of sinusoidal temperature wave (K)
@@ -32,25 +32,25 @@ for i = 1:length(time)
     % Step 2: Determine the state of diode 1(positive Zener diode) based on previous temperature difference
     if delta_T_diode1_prev <= -T_breakdown
         % Negative Zener Diode: Reverse breakdown
-        R_diode1 = R_reverse_breakdown;
+        R_diode1 = R_breakdown;
     elseif delta_T_source >= 0
         % Negative Zener Diode: Forward heat flow
         R_diode1 = R_forward;
     else
         % Negative Zener Diode: Reverse blocking
-        R_diode1 = R_reverse_high;
+        R_diode1 = R_reverse;
     end
     
     % Step 3: Determine the state of diode 2(negative Zener Diode) based on previous temperature difference
     if delta_T_diode2_prev >= T_breakdown
         % Positive Zener Diode: Reverse breakdown
-        R_diode2 = R_reverse_breakdown;
+        R_diode2 = R_breakdown;
     elseif delta_T_source <= 0
         % Positive Zener Diode: Forward heat flow
         R_diode2 = R_forward;
     else
         % Positive Zener Diode: Reverse blocking
-        R_diode2 = R_reverse_high;
+        R_diode2 = R_reverse;
     end
 
     % Step 4: Calculate the temperature across both diodes using voltage division
@@ -77,4 +77,4 @@ grid on;
 xlabel('Time (s)');
 ylabel('Temperature (K)');
 legend('Input Temperature Wave', 'Output Temperature (Square Wave)', 'Upper Boundary', 'Lower Boundary');
-title('Heat Clipping Circuit with Double Thermal Zener Diodes');
+title('Temperature Clipping Circuit with Double Thermal Zener Diodes');
