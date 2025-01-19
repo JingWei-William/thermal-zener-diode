@@ -6,11 +6,11 @@ T0 = 300; % Initial temperature of the system (K)
 C1 = 5; % Thermal capacitance of node 1 (J/K)
 C2 = 5; % Thermal capacitance of node 2 (J/K)
 R_forward = 0.2; % Thermal resistance in forward bias (K/W)
-R_reverse_high = 10; % Reduced high thermal resistance in reverse bias (K/W)
-R_reverse_breakdown = 2; % Thermal resistance in reverse breakdown (K/W)
+R_reverse = 10; % Reduced high thermal resistance in reverse bias (K/W)
+R_breakdown = 0.4; % Thermal resistance in reverse breakdown (K/W)
 T_breakdown = 50; % Reverse temperature difference for breakdown (K)
 dt = 0.01; % Time step (s)
-total_time = 200; % Total simulation time (s)
+total_time = 100; % Total simulation time (s)
 
 % Parameters for TR(t)
 TR_amplitude = 50; % Amplitude of TR oscillation (K)
@@ -34,18 +34,18 @@ for i = 2:length(time)
     if delta_T1 > 0
         R1 = R_forward; % Forward bias
     elseif abs(delta_T1) < T_breakdown
-        R1 = R_reverse_high; % Reverse bias (no breakdown)
+        R1 = R_reverse; % Reverse bias (no breakdown)
     else
-        R1 = R_reverse_breakdown; % Reverse breakdown
+        R1 = R_breakdown; % Reverse breakdown
     end
 
     % Determine thermal resistance for TR -> T2 path (negative diode)
     if delta_T2 > 0
         R2 = R_forward; % Forward bias
     elseif abs(delta_T2) < T_breakdown
-        R2 = R_reverse_high; % Reverse bias (no breakdown)
+        R2 = R_reverse; % Reverse bias (no breakdown)
     else
-        R2 = R_reverse_breakdown; % Reverse breakdown
+        R2 = R_breakdown; % Reverse breakdown
     end
 
     % Update temperatures using thermal circuit equations
