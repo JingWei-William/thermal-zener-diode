@@ -6,8 +6,8 @@ T0 = 300; % Base temperature (K)
 T_breakdown = 40; % Reverse temperature difference for breakdown (K)
 R_source = 1; % Source thermal resistance (K/W)
 R_forward = 0.2; % Thermal resistance in forward bias (K/W)
-R_reverse_high = 10; % Thermal resistance in reverse bias before breakdown (K/W)
-R_reverse_breakdown = 0.8; % Thermal resistance in reverse bias after breakdown (K/W)
+R_reverse = 10; % Thermal resistance in reverse bias before breakdown (K/W)
+R_breakdown = 0.8; % Thermal resistance in reverse bias after breakdown (K/W)
 dt = 0.01; % Time step (s)
 total_time = 10; % Total simulation time (s)
 
@@ -25,7 +25,7 @@ T_out = zeros(size(time)); % Output temperature
 % Simulation loop
 for i = 1:length(time)
     % Step 1: Assume initial state (reverse high resistance)
-    R_diode = R_reverse_high;
+    R_diode = R_reverse;
 
     % Step 2: Calculate initial temperature difference across the diode
     delta_T_source = TR(i) - T0;
@@ -36,10 +36,10 @@ for i = 1:length(time)
         % Reverse heat flow
         if delta_T_diode >= T_breakdown
             % Reverse breakdown
-            R_diode = R_reverse_breakdown;
+            R_diode = R_breakdown;
         else
             % Reverse blocking
-            R_diode = R_reverse_high;
+            R_diode = R_reverse;
         end
     else
         % Forward heat flow
@@ -58,11 +58,10 @@ figure;
 plot(time, TR, 'b-', 'LineWidth', 2); % Input temperature wave
 hold on;
 plot(time, T_out, 'r-', 'LineWidth', 2); % Output temperature
-yline(T0 + TR_amplitude, 'k--', 'LineWidth', 1.5); % Upper boundary of input wave
-yline(T0 - TR_amplitude, 'k--', 'LineWidth', 1.5); % Lower boundary of input wave
+yline(T0 + T_breakdown, 'k--', 'LineWidth', 1.5); % Temperature difference for breakdown
 hold off;
 grid on;
 xlabel('Time (s)');
 ylabel('Temperature (K)');
-legend('Input Temperature Wave', 'Output Temperature', 'Upper Boundary', 'Lower Boundary');
-title('Heat Clipping Circuit with a Thermal Zener Diodes');
+legend('Input Temperature Wave', 'Output Temperature', 'T breakdown');
+title('Temperature Clipping Circuit with a Thermal Zener Diode');
